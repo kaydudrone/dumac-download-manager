@@ -70,6 +70,8 @@ Keep the cloned folder: the browser loads the extension from it.
 
 Only download content you own, that's freely licensed, or that you have permission to download, and respect each site's terms of service and copyright law where you live. This tool is provided as is, without warranty.
 
+If you're a rights holder with a concern about this project, please [open an issue](https://github.com/kaydudrone/dumac-download-manager/issues) and it will be handled promptly.
+
 ## Troubleshooting
 
 | Problem | Fix |
