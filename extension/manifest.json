@@ -1,0 +1,46 @@
+{
+  "manifest_version": 3,
+  "name": "Dumac Download Manager",
+  "version": "1.0.0",
+  "description": "Download videos and files on macOS: a download button on YouTube and other video sites, and browser downloads handed to the Dumac Download Manager app.",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAt70QJHCnbgnYlOQp3pOBYBvNKmzYj5cnvyU91AQjVH+Ct8lwtwbYxMf4KXppDvH8EmbZEkHKZqR9y6ALEblTgmdnbA3rA0lQoEqvZvvk7j7s1QlfSJno7GIZxt805q8HLYUjbqgi6Cy3UmpVc0n5g45SNI/SoaxccgElEkteCRUYiaKXyDD2w+IYRgFTg1jLutosFAoERYW/oMpgypZRCLzaH3O5kPCVlLcWG1Zb1bkTf70TOfoTy2lOdwq6zwzalyg8kQMV3dr5QyQiuFfwlExs51vTYufwq7X9qGhueupD+HPv2CUrDIZJ5lNlCzud/tCQ/xpap7qMzQO4Sfx/vwIDAQAB",
+  "permissions": [
+    "nativeMessaging",
+    "clipboardRead",
+    "downloads",
+    "cookies"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.youtube.com/*",
+        "https://m.youtube.com/*",
+        "https://www.instagram.com/*",
+        "https://www.tiktok.com/*",
+        "https://www.facebook.com/*",
+        "https://web.facebook.com/*",
+        "https://x.com/*",
+        "https://twitter.com/*",
+        "https://vimeo.com/*",
+        "https://www.dailymotion.com/*",
+        "https://www.xiaohongshu.com/*",
+        "https://www.bilibili.com/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "css": [
+        "content.css"
+      ]
+    }
+  ],
+  "action": {
+    "default_title": "Dumac Download Manager"
+  },
+  "host_permissions": [
+    "<all_urls>"
+  ]
+}

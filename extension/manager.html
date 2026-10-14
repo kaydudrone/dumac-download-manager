@@ -1,0 +1,233 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Dumac Download Manager</title>
+  <link rel="stylesheet" href="manager.css">
+</head>
+<body>
+  <!-- Toolbar icons: Lucide (ISC licence) path data -->
+  <nav class="toolbar">
+    <button id="add" title="Add a new download (⌘N)">
+      <svg viewBox="0 0 24 24" class="ic green"><path d="M5 12h14"/><path d="M12 5v14"/></svg>Add URL</button>
+    <button id="resume" data-need="resumable" title="Resume the selected downloads">
+      <svg viewBox="0 0 24 24" class="ic blue"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="m8 12 4 4 4-4"/></svg>Resume</button>
+    <button id="stop" data-need="running" title="Stop the selected downloads">
+      <svg viewBox="0 0 24 24" class="ic grey"><circle cx="12" cy="12" r="10"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>Stop</button>
+    <button id="stopall" title="Stop every running download">
+      <svg viewBox="0 0 24 24" class="ic grey"><path d="M18 11V6a2 2 0 0 0-4 0v5"/><path d="M14 10V4a2 2 0 0 0-4 0v6"/><path d="M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>Stop All</button>
+    <button id="delete" data-need="any" title="Remove the selected downloads from the list">
+      <svg viewBox="0 0 24 24" class="ic red"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>Delete</button>
+    <button id="delcompleted" title="Remove all completed downloads from the list">
+      <svg viewBox="0 0 24 24" class="ic red"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="m9 13 2 2 4-4"/></svg>Delete Co...</button>
+    <button id="options" title="Options">
+      <svg viewBox="0 0 24 24" class="ic purple"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>Options</button>
+    <button id="scheduler" title="Scheduler">
+      <svg viewBox="0 0 24 24" class="ic purple"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M5 3 2 6"/><path d="m22 6-3-3"/></svg>Scheduler</button>
+    <button id="startqueue" title="Start the main download queue">
+      <svg viewBox="0 0 24 24" class="ic blue"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/><path d="m13 12 4 3-4 3z"/></svg>Start Qu...</button>
+    <button id="stopqueue" title="Stop the main download queue">
+      <svg viewBox="0 0 24 24" class="ic blue"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/><rect x="12.5" y="12.5" width="5" height="5" rx=".5"/></svg>Stop Qu...</button>
+  </nav>
+
+  <div id="powerbar" class="powerbar" hidden>
+    <span id="powertext"></span>
+    <button id="powercancel">Cancel</button>
+  </div>
+
+  <main>
+    <aside id="side">
+      <div class="side-head">Categories <button id="hidecats" title="Hide categories">×</button></div>
+      <ul class="tree" id="cats">
+        <li data-cat="all" class="sel"><span class="tw" data-toggle="all">−</span><span class="fold open"></span>All Downloads</li>
+        <li data-cat="compressed" class="sub" data-parent="all"><span class="fold"></span>Compressed</li>
+        <li data-cat="documents" class="sub" data-parent="all"><span class="fold"></span>Documents</li>
+        <li data-cat="music" class="sub" data-parent="all"><span class="fold"></span>Music</li>
+        <li data-cat="programs" class="sub" data-parent="all"><span class="fold"></span>Programs</li>
+        <li data-cat="video" class="sub" data-parent="all"><span class="fold"></span>Video</li>
+        <li data-cat="unfinished"><span class="tw blank"></span><span class="fold"></span>Unfinished</li>
+        <li data-cat="finished"><span class="tw blank"></span><span class="fold"></span>Finished</li>
+        <li data-cat="queues"><span class="tw" data-toggle="queues">−</span><span class="fold"></span>Queues</li>
+        <li data-cat="mainqueue" class="sub" data-parent="queues"><span class="fold q"></span>Main download queue</li>
+      </ul>
+    </aside>
+    <button id="showcats" hidden title="Show categories">»</button>
+
+    <section class="grid">
+      <table>
+        <thead>
+          <tr>
+            <th data-sort="name">File Name</th><th data-sort="queued">Q</th><th data-sort="size">Size</th>
+            <th data-sort="status">Status</th><th data-sort="eta">Time left</th><th data-sort="rate">Transfer rate</th>
+            <th data-sort="date">Last Try Date</th><th data-sort="desc">Description</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <p id="empty" hidden></p>
+    </section>
+  </main>
+
+  <!-- Right-click menu on rows -->
+  <ul id="ctx" class="ctx" hidden>
+    <li data-act="open">Open</li>
+    <li data-act="reveal">Open folder</li>
+    <li class="sep"></li>
+    <li data-act="resume">Resume download</li>
+    <li data-act="stop">Stop download</li>
+    <li class="sep"></li>
+    <li data-act="queue_add">Add to queue</li>
+    <li data-act="queue_remove">Remove from queue</li>
+    <li class="sep"></li>
+    <li data-act="delete">Delete</li>
+    <li data-act="properties">Properties</li>
+  </ul>
+
+  <!-- Download status window (per-download progress dialog) -->
+  <dialog id="statusdlg" class="status">
+    <div class="st-title" id="st-title"></div>
+    <div class="st-body">
+      <table class="kv">
+        <tr><th>URL</th><td id="st-url"></td></tr>
+        <tr><th>Status</th><td id="st-status"></td></tr>
+        <tr><th>File size</th><td id="st-size"></td></tr>
+        <tr><th>Downloaded</th><td id="st-done"></td></tr>
+        <tr><th>Transfer rate</th><td id="st-rate"></td></tr>
+        <tr><th>Time left</th><td id="st-eta"></td></tr>
+        <tr><th>Connections</th><td id="st-cn"></td></tr>
+        <tr><th>Resume capability</th><td>Yes</td></tr>
+      </table>
+      <div class="meter"><b id="st-bar"></b></div>
+      <p class="st-note" id="st-note"></p>
+      <menu>
+        <button id="st-open" hidden>Open</button>
+        <button id="st-folder" hidden>Open folder</button>
+        <button id="st-pause">Pause</button>
+        <button id="st-cancel">Cancel</button>
+        <button id="st-close">Close</button>
+      </menu>
+    </div>
+  </dialog>
+
+  <dialog id="adddlg">
+    <form method="dialog">
+      <h2>Enter new address to download</h2>
+      <label for="url">Address</label>
+      <input id="url" type="text" placeholder="https://…" autocomplete="off" spellcheck="false">
+      <div class="row2">
+        <label for="addq">Quality</label>
+        <select id="addq">
+          <option value="compatible">Plays everywhere (up to 1080p)</option>
+          <option value="max">Maximum (4K when available)</option>
+          <option value="mp3">MP3 audio only</option>
+        </select>
+      </div>
+      <div class="row2"><label>Save to</label><span id="addfolder" class="path"></span></div>
+      <p class="hint">Videos from YouTube, Instagram, TikTok, Facebook, XHS and most sites, or a direct link to any file.</p>
+      <p class="err" id="adderr" hidden></p>
+      <menu>
+        <button value="start" class="primary">Start Download</button>
+        <button value="later">Download Later</button>
+        <button value="cancel" formnovalidate>Cancel</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <dialog id="optdlg">
+    <form method="dialog">
+      <h2>Options</h2>
+      <div class="row2"><label>Save downloads to</label><span id="optfolder" class="path"></span><button type="button" id="browse">Browse…</button></div>
+      <div class="row2">
+        <label for="optq">Default quality</label>
+        <select id="optq">
+          <option value="compatible">Plays everywhere (up to 1080p)</option>
+          <option value="max">Maximum (4K when available)</option>
+          <option value="mp3">MP3 audio only</option>
+        </select>
+      </div>
+      <div class="row2">
+        <label for="optmax">Queue downloads at a time</label>
+        <select id="optmax"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
+      </div>
+      <div class="row2">
+        <label for="optcn">Connections per download</label>
+        <select id="optcn"><option>1</option><option>2</option><option>4</option><option>8</option><option>16</option></select>
+      </div>
+      <div class="row2">
+        <label for="optlimit">Speed limit</label>
+        <select id="optlimit">
+          <option value="0">No limit</option><option value="0.5">0.5 MB/s</option><option value="1">1 MB/s</option>
+          <option value="2">2 MB/s</option><option value="5">5 MB/s</option><option value="10">10 MB/s</option>
+          <option value="20">20 MB/s</option><option value="50">50 MB/s</option>
+        </select>
+      </div>
+      <div class="row2">
+        <label for="optproxy">Proxy (optional)</label>
+        <input id="optproxy" type="text" placeholder="http://host:port or socks5://host:port" autocomplete="off" spellcheck="false">
+      </div>
+      <label class="check"><input type="checkbox" id="optnotify"> Show a notification when a download finishes</label>
+      <label class="check"><input type="checkbox" id="optsort"> Save into category folders (Video, Music, Compressed, Documents, Programs)</label>
+      <label class="check"><input type="checkbox" id="optcatch"> Catch browser downloads (Brave, Chrome, Edge…)</label>
+      <label class="check"><input type="checkbox" id="optclip"> Offer to download links I copy (Mac app)</label>
+      <label class="check"><input type="checkbox" id="optlogin"> Use my browser login for sites that need it (not YouTube)</label>
+      <label class="check"><input type="checkbox" id="optyt"> Use my YouTube login (fixes "Sign in to confirm you're not a bot")</label>
+      <div class="row2">
+        <label for="optbrowser">Read the YouTube login from</label>
+        <select id="optbrowser">
+          <option value="brave">Brave</option><option value="chrome">Google Chrome</option><option value="edge">Microsoft Edge</option>
+          <option value="vivaldi">Vivaldi</option><option value="chromium">Chromium</option><option value="firefox">Firefox</option>
+        </select>
+      </div>
+      <p class="err" id="opterr" hidden></p>
+      <menu><button value="ok" class="primary">OK</button><button value="cancel" formnovalidate>Cancel</button></menu>
+    </form>
+  </dialog>
+
+  <dialog id="schdlg">
+    <form method="dialog">
+      <h2>Scheduler — Main download queue</h2>
+      <label class="check"><input type="checkbox" id="schon"> Start the download queue at</label>
+      <div class="row2"><label for="schtime">Time</label><input id="schtime" type="time" value="02:00"></div>
+      <div class="days" id="schdays"></div>
+      <div class="row2">
+        <label for="schafter">When the queue finishes</label>
+        <select id="schafter">
+          <option value="nothing">Do nothing</option>
+          <option value="sleep">Put the Mac to sleep</option>
+          <option value="shutdown">Shut down the Mac</option>
+        </select>
+      </div>
+      <p class="hint">Starts the queue while the manager window is open. Your Mac has to be awake at that time.
+        Sleep / shut down waits 60 seconds first, so you can cancel.</p>
+      <p class="err" id="scherr" hidden></p>
+      <menu><button value="ok" class="primary">OK</button><button value="cancel" formnovalidate>Cancel</button></menu>
+    </form>
+  </dialog>
+
+  <dialog id="propdlg">
+    <form method="dialog">
+      <h2>Properties</h2>
+      <table class="kv" id="proptable"></table>
+      <menu><button value="ok" class="primary">Close</button></menu>
+    </form>
+  </dialog>
+
+  <dialog id="confirmdlg">
+    <form method="dialog">
+      <h2 id="confirmtext"></h2>
+      <p class="hint">Files already saved stay in your folder.</p>
+      <menu><button value="ok" class="primary">OK</button><button value="cancel">Cancel</button></menu>
+    </form>
+  </dialog>
+
+  <dialog id="msgdlg">
+    <form method="dialog">
+      <h2 id="msgtitle">Dumac Download Manager</h2>
+      <p id="msgtext"></p>
+      <menu><button value="ok" class="primary">OK</button></menu>
+    </form>
+  </dialog>
+
+  <script src="manager.js"></script>
+</body>
+</html>
