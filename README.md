@@ -2,6 +2,8 @@
 
 A free download manager for macOS. Download videos from YouTube, Instagram, TikTok, Facebook, X, Vimeo and more, and speed up ordinary file downloads, all from one Mac app.
 
+![The "Download this video" button with its quality menu](docs/screenshots/video-button.png)
+
 - **"Download this video" button** on video pages in Brave, Chrome, Edge and Vivaldi, with every available quality (up to 4K) and MP3.
 - **Takes over browser downloads**: click a download link and it goes to the app, with several connections at once for speed.
 - **Mac app** with a download list, live progress (speed, time left), pause/resume, categories, a queue, a scheduler, a speed limit and a proxy setting.
@@ -9,6 +11,20 @@ A free download manager for macOS. Download videos from YouTube, Instagram, TikT
 - **Auto-retry** when the connection drops; resumes where it stopped.
 
 It's built on [yt-dlp](https://github.com/yt-dlp/yt-dlp) for videos and [aria2](https://aria2.github.io/) for files.
+
+## Screenshots
+
+**The app**: every download in one list, with live speed, time left, categories and a queue.
+
+![Dumac Download Manager main window](docs/screenshots/main-window.png)
+
+**Download status**: double-click a download to see its progress, and pause or cancel it.
+
+![Download status window](docs/screenshots/download-status.png)
+
+**Options**: connections, speed limit, proxy, category folders, browser takeover and more.
+
+![Options window](docs/screenshots/options.png)
 
 ## Install
 
