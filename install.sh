@@ -71,12 +71,14 @@ step "Building the app"
 BUILD="$(mktemp -d)"
 trap 'rm -rf "$BUILD"' EXIT
 swiftc -swift-version 5 -O "$REPO/macapp/main.swift" -o "$BUILD/DownloadManager" -framework Cocoa -framework WebKit
-swiftc -swift-version 5 "$REPO/macapp/icon.swift" -o "$BUILD/makeicon" -framework Cocoa
-"$BUILD/makeicon" "$BUILD/icon1024.png"
+# App icon: macapp/icon/ (1024 master + hand-tuned 16/32 px versions that stay sharp in Finder lists).
+ICON="$REPO/macapp/icon"
 mkdir "$BUILD/AppIcon.iconset"
-for s in 16 32 128 256 512; do
-  sips -z $s $s "$BUILD/icon1024.png" --out "$BUILD/AppIcon.iconset/icon_${s}x${s}.png" >/dev/null
-  sips -z $((s * 2)) $((s * 2)) "$BUILD/icon1024.png" --out "$BUILD/AppIcon.iconset/icon_${s}x${s}@2x.png" >/dev/null
+cp "$ICON/dumac-icon-D-small-16.png" "$BUILD/AppIcon.iconset/icon_16x16.png"
+cp "$ICON/dumac-icon-D-small-32.png" "$BUILD/AppIcon.iconset/icon_16x16@2x.png"
+cp "$ICON/dumac-icon-D-small-32.png" "$BUILD/AppIcon.iconset/icon_32x32.png"
+for px in 64:icon_32x32@2x 128:icon_128x128 256:icon_128x128@2x 256:icon_256x256 512:icon_256x256@2x 512:icon_512x512 1024:icon_512x512@2x; do
+  sips -z ${px%%:*} ${px%%:*} "$ICON/dumac-icon-A-default.png" --out "$BUILD/AppIcon.iconset/${px#*:}.png" >/dev/null
 done
 iconutil -c icns "$BUILD/AppIcon.iconset" -o "$BUILD/AppIcon.icns"
 mkdir -p "$HOME/Applications"

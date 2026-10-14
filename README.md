@@ -1,3 +1,5 @@
+<p align="center"><img src="macapp/icon/dumac-icon-A-default.png" width="160" alt="Dumac Download Manager icon"></p>
+
 # Dumac Download Manager
 
 A free download manager for macOS. Download videos from YouTube, Instagram, TikTok, Facebook, X, Vimeo and more, and speed up ordinary file downloads, all from one Mac app.
